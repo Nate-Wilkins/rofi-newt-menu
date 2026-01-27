@@ -24,8 +24,15 @@ fi
 
 # -[ program config ]----------------------------------------- #
 # /
-_rofi () {
-  $PROGRAM_ROFI -dmenu -no-config -columns 1 -i -terminal "$PROGRAM_ALACRITTY" -sorting-method "fzf" "$@"
+_rofi() {
+  "$PROGRAM_ROFI" \
+    -no-config \
+    -dmenu \
+    -columns 1 \
+    -i \
+    -terminal "$PROGRAM_ALACRITTY" \
+    -sorting-method fzf \
+    "$@"
 }
 
 NOTES_ACTION_NEW="Control+n"
@@ -88,7 +95,14 @@ _delete_note() {
 # -[ main ]--------------------------------------------------- #
 # /
 # Show rofi menu.
-rofi_result=$($PROGRAM_NEWT list | _rofi -p 'note:' -kb-custom-1 "${NOTES_ACTION_NEW}" -kb-custom-2 "${NOTES_ACTION_EDIT}" -kb-custom-3 "${NOTES_ACTION_DELETE}")
+rofi_result=$(
+  _rofi \
+    -p 'note:' \
+    -kb-custom-1 "${NOTES_ACTION_NEW}" \
+    -kb-custom-2 "${NOTES_ACTION_EDIT}" \
+    -kb-custom-3 "${NOTES_ACTION_DELETE}" \
+    <<< "$($PROGRAM_NEWT list)"
+)
 rofi_result_exit_code="$?"
 
 # Process keybinding pressed.
