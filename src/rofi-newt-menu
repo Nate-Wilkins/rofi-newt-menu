@@ -25,7 +25,7 @@ fi
 # -[ program config ]----------------------------------------- #
 # /
 _rofi () {
-  $PROGRAM_ROFI -dmenu -columns 1 -i -terminal "$PROGRAM_ALACRITTY" -sorting-method "fzf" "$@"
+  $PROGRAM_ROFI -dmenu -no-config -columns 1 -i -terminal "$PROGRAM_ALACRITTY" -sorting-method "fzf" "$@"
 }
 
 NOTES_ACTION_NEW="Ctrl+n"
