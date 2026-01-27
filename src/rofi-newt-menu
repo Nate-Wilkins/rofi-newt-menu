@@ -26,7 +26,6 @@ fi
 # /
 _rofi() {
   "$PROGRAM_ROFI" \
-    -no-config \
     -dmenu \
     -columns 1 \
     -i \
