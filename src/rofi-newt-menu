@@ -1,0 +1,106 @@
+#! /bin/bash
+
+# -[ dependencies ]------------------------------------------- #
+# /
+: "${PROGRAM_ALACRITTY:?PROGRAM_ALACRITTY is not set}"
+: "${PROGRAM_NEWT:?PROGRAM_NEWT is not set}"
+: "${PROGRAM_ROFI:?PROGRAM_ROFI is not set}"
+# \
+# -[ dependencies ]------------------------------------------- #
+
+
+# -[ parse arguments ]---------------------------------------- #
+# /
+if [[ " $* " == *" --help "* ]]; then
+  echo "Usage:"
+  echo "  rofi-newt-menu"
+  echo ""
+  echo "Show Newt notes with Rofi."
+  exit 0
+fi
+# \
+# -[ parse arguments ]---------------------------------------- #
+
+
+# -[ program config ]----------------------------------------- #
+# /
+_rofi () {
+  $PROGRAM_ROFI -dmenu -columns 1 -i -terminal "$PROGRAM_ALACRITTY" -sorting-method "fzf" "$@"
+}
+
+NOTES_ACTION_NEW="Ctrl+n"
+NOTES_ACTION_EDIT="Ctrl+e"
+NOTES_ACTION_DELETE="Ctrl+d"
+# \
+# -[ program config ]----------------------------------------- #
+
+
+# -[ user config ]-------------------------------------------- #
+# /
+USER_CONFIG="$HOME/.config/rofi-newt-menu/config"
+if [[ -f $USER_CONFIG ]]; then
+  source $USER_CONFIG
+else
+  echo "Warning: User config file \'$USER_CONFIG\' not found."
+fi
+# \
+# -[ user config ]-------------------------------------------- #
+
+
+# -[ program functions ]-------------------------------------- #
+# /
+_add_note() {
+  rofi_add_ask_result="$(_rofi -p "Add note")"
+  rofi_add_ask_result_exit_code=$?
+
+  # Process add request.
+  if [[ "$rofi_add_ask_result_exit_code" == "0" ]]; then
+    if [[ "$rofi_add_ask_result" != "" ]]; then
+      $PROGRAM_NEWT new "$rofi_add_ask_result"
+    fi
+  fi
+}
+
+_edit_note() {
+  rofi_result="$1"
+
+  $PROGRAM_NEWT edit "$rofi_result"
+}
+
+_delete_note() {
+  rofi_result="$1"
+
+  # Show rofi delete confirmation.
+  rofi_delete_ask_result=$(echo -e "1. No\n2. Yes" | _rofi -p "Delete '$rofi_result'")
+  rofi_delete_ask_result_exit_code=$?
+
+  # Process delete confirmation.
+  if [[ "$rofi_delete_ask_result_exit_code" == "0" ]]; then
+    if [[ "$rofi_delete_ask_result" == "2. Yes" ]]; then
+      $PROGRAM_NEWT delete "$rofi_result"
+    fi
+  fi
+}
+# \
+# -[ program functions ]-------------------------------------- #
+
+
+# -[ main ]--------------------------------------------------- #
+# /
+# Show rofi menu.
+rofi_result=$($PROGRAM_NEWT list | _rofi -p 'note:' -kb-custom-1 "${NOTES_ACTION_NEW}" -kb-custom-2 "${NOTES_ACTION_EDIT}" -kb-custom-3 "${NOTES_ACTION_DELETE}")
+rofi_result_exit_code="$?"
+
+# Process keybinding pressed.
+if [[ "$rofi_result_exit_code" == "10" ]]; then
+  _add_note
+elif [[ "$rofi_result_exit_code" == "11" ]]; then
+  _edit_note "$rofi_result"
+elif [[ "$rofi_result_exit_code" == "12" ]]; then
+  _delete_note "$rofi_result"
+elif [[ "$rofi_result_exit_code" == "0" ]]; then
+  # Process user input accepted.
+  _edit_note "$rofi_result"
+fi
+# \
+# -[ main ]--------------------------------------------------- #
