@@ -181,11 +181,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1769472159,
-        "narHash": "sha256-/hnUKtAS/XlVb9Tn9+FSg+Ytt2R9mGQ2MAR1kTXX0ms=",
+        "lastModified": 1769554402,
+        "narHash": "sha256-rDzWuVmWhyW2+NnQjQ2zli8+zCDZobUcEpG9sL+myzc=",
         "owner": "nate-wilkins",
         "repo": "newt",
-        "rev": "dfb680d4b6e39619fac5874e8ae4105c3a0d8ec5",
+        "rev": "d646e2e47872f1344f510ae58e351dd2507eeeb3",
         "type": "github"
       },
       "original": {
