@@ -1,4 +1,4 @@
 name               = "rofi-newt-menu"
-version            = "0.1.7"
+version            = "0.1.8"
 description        = "Rofi program to show Newt notes."
 author             = "Nate-Wilkins <nate-wilkins@code-null.com>"
